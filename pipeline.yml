@@ -10,6 +10,12 @@ steps:
       queue: "ubuntu"
     timeout_in_minutes: 5
 
+  - label: ":gear: Set Permissions"
+    command: |
+      chmod +x bgmi  # Ensure bgmi is executable
+    agents:
+      queue: "ubuntu"
+
   - label: ":rocket: Run sklate.py"
     command: |
       source venv/bin/activate
