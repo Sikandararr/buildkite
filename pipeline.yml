@@ -1,0 +1,35 @@
+steps:
+  - label: ":python: Setup Environment"
+    command: |
+      sudo apt update && sudo apt install -y python3 python3-venv python3-pip
+      python3 -m venv venv
+      source venv/bin/activate
+      pip install --upgrade pip
+      pip install -r requirements.txt || true  # Install dependencies if needed
+    agents:
+      queue: "ubuntu"
+    timeout_in_minutes: 5
+
+  - label: ":rocket: Run sklate.py"
+    command: |
+      source venv/bin/activate
+      python sklate.py  # Execute your UDP flooder script
+    agents:
+      queue: "ubuntu"
+    timeout_in_minutes: 10
+    retry:
+      automatic: true  # Retries if it fails
+
+  - label: ":mag: Check Logs"
+    command: |
+      cat build.log || echo "No logs found"
+    agents:
+      queue: "ubuntu"
+    soft_fail: true  # Does not fail the pipeline if logs are missing
+
+  - label: ":broom: Cleanup"
+    command: |
+      rm -rf venv
+    agents:
+      queue: "ubuntu"
+    soft_fail: true
